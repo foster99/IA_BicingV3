@@ -196,8 +196,8 @@ public class BicingState {
 
         StringBuilder ret = new StringBuilder();
 
-        ret.append(this.computeBenefits()).append("\t").append(this.getTotalDistance()).append("\t").append((int)this.getActive()).append("\t").append(time);
-
+        //ret.append(this.computeBenefits()).append("\t").append(this.getTotalDistance()).append("\t").append((int)this.getActive()).append("\t").append(time);
+        ret.append(time);
         return ret.toString();
     }
 

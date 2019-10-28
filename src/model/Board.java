@@ -17,7 +17,7 @@ public class Board {
 
     public static void main(String[] args) {
 
-        int nest, nbic, f, dem, seed, init_sol, algorithm, testing;
+        int nest, nbic, f, dem, seed, init_sol, algorithm, heuristic, testing;
 
         if (args.length > 0) {
             testing= Integer.parseInt(args[0]);
@@ -41,17 +41,21 @@ public class Board {
             else if (init_sol == 2)
                 initial_state.initialSolution2();
 
-            algorithm = Integer.parseInt(args[7]);
+            heuristic = Integer.parseInt(args[7]);
+
+            algorithm = Integer.parseInt(args[8]);
             if (algorithm == 0)
-                Bicing_HillClimbing(initial_state,testing);
+                Bicing_HillClimbing(initial_state,testing, heuristic);
             else if (algorithm == 1)
-                Bicing_SimulatedAnnealing(initial_state, args,testing);
+                Bicing_SimulatedAnnealing(initial_state, args,testing, heuristic);
         }
 
         else {
             Scanner in = new Scanner(System.in);
 
-            System.out.println("TESTING????:");
+            System.out.println("Salida en modo:\n" +
+                    "\t- Introduce (0) para obtener la informacion COMPLETA (Recomendada).\n" +
+                    "\t- Introduce (1) para obtener la informacion SIMPLIFICADA (solo para testing).");
             testing=in.nextInt();
 
             System.out.println("Introduce el numero de Estaciones:");
@@ -83,6 +87,7 @@ public class Board {
 
             BicingState initial_state = new BicingState(nest, nbic, dem, seed, f, init_sol);
 
+
             if (init_sol == 0)
                 initial_state.initialSolution0();
             else if (init_sol == 1)
@@ -90,24 +95,31 @@ public class Board {
             else if (init_sol == 2)
                 initial_state.initialSolution2();
 
+            System.out.println("Criterio del Heuristico:\n" +
+                    "\t- Introduce (0) para utilizar TRANSPORTE GRATIS.\n" +
+                    "\t- Introduce (1) para utilizar BENEFICIO.");
+            heuristic = in.nextInt();
+
             System.out.println("Algoritmo de busqueda local:\n" +
                     "\t- Introduce (0) para utilizar HILL CLIMBING.\n" +
                     "\t- Introduce (1) para utilizar SIMULATED ANNEALING.");
             algorithm = in.nextInt();
             if (algorithm == 0)
-                Bicing_HillClimbing(initial_state, testing);
+                Bicing_HillClimbing(initial_state, testing, heuristic);
             else if (algorithm == 1)
-                Bicing_SimulatedAnnealing(initial_state, null, testing);
+                Bicing_SimulatedAnnealing(initial_state, null, testing, heuristic);
         }
 
     }
-// 0 500 25000 100 1 1234 0 0 1 1 10000 10 5 0.001
-    private static void Bicing_HillClimbing(BicingState state, int testing) {
+
+    private static void Bicing_HillClimbing(BicingState state, int testing, int heuristic) {
         try {
 
-            tick = System.currentTimeMillis();
+            Problem problem;
+            if (heuristic == 0) problem = new Problem(state, new SuccessorFunction_HC(), new GoalTest(), new HeuristicFunction0());
+            else problem = new Problem(state, new SuccessorFunction_HC(), new GoalTest(), new HeuristicFunction1());
 
-            Problem problem = new Problem(state, new SuccessorFunction_HC(), new GoalTest(), new HeuristicFunction_HC());
+            tick = System.currentTimeMillis();
 
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
@@ -127,21 +139,23 @@ public class Board {
             e.printStackTrace();
         }
     }
-    private static void Bicing_SimulatedAnnealing(BicingState state, String[] args, int testing) {
+    private static void Bicing_SimulatedAnnealing(BicingState state, String[] args, int testing, int heuristic) {
         try {
-            Problem problem = new Problem(state, new SuccessorFunction_SA(), new GoalTest(), new HeuristicFunction_HC());
+            Problem problem;
+            if (heuristic == 0) problem = new Problem(state, new SuccessorFunction_SA(), new GoalTest(), new HeuristicFunction0());
+            else problem = new Problem(state, new SuccessorFunction_SA(), new GoalTest(), new HeuristicFunction1());
 
-            // Default simulated annealin
+            // Default simulated annealing
             int steps = 10000;
             int stiter = 5;
             int k = 5;
             double lamb = 0.001;
 
-            if ((args != null) && (Integer.parseInt(args[8]) == 1)) { // Lectura de argumentos
-                steps = Integer.parseInt(args[9]);
-                stiter = Integer.parseInt(args[10]);
-                k = Integer.parseInt(args[11]);
-                lamb = Double.parseDouble(args[12]);
+            if ((args != null) && (Integer.parseInt(args[9]) == 1)) { // Lectura de argumentos
+                steps = Integer.parseInt(args[10]);
+                stiter = Integer.parseInt(args[11]);
+                k = Integer.parseInt(args[12]);
+                lamb = Double.parseDouble(args[13]);
             }
             else { // Lectura de consola
                 System.out.println("Parametros de Simulated Annealing:\n" +

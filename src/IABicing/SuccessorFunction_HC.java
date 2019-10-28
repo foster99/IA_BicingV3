@@ -61,6 +61,7 @@ public class SuccessorFunction_HC implements SuccessorFunction {
                 BicingState succ4 = new BicingState(NewFurgos4);
                 retVal.add(new Successor(result, succ4));
             }
+            /*
             // changeOrigin
             boolean[] used = new boolean[BicingState.getStations().size()];
             for (Furgoneta F : OldFurgos) used[F.origin] = true;
@@ -74,7 +75,7 @@ public class SuccessorFunction_HC implements SuccessorFunction {
                 String result5 = Operator.changeOrigin(NewFurgos5[f], origin);
                 BicingState succ5 = new BicingState(NewFurgos5);
                 retVal.add(new Successor(result5, succ5));
-            }
+            }*/
         }
 
         return retVal;

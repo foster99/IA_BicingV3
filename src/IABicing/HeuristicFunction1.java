@@ -3,7 +3,7 @@ package IABicing;
 import aima.search.framework.HeuristicFunction;
 import model.Board;
 
-public class HeuristicFunction_HC implements HeuristicFunction {
+public class HeuristicFunction1 implements HeuristicFunction {
     @Override
     public double getHeuristicValue(Object state) {
         BicingState b_state = (BicingState) state;
